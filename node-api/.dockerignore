@@ -1,0 +1,19 @@
+# Archivos que Docker NO debe copiar al construir la imagen
+
+# Dependencias locales (se reinstalan dentro del contenedor con npm ci)
+node_modules
+
+# Código compilado local (se recompila dentro del contenedor)
+dist
+
+# Archivos de entorno
+.env
+.env.*
+
+# Control de versiones
+.git
+.gitignore
+
+# Config de desarrollo
+nodemon.json
+.vscode

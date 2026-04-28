@@ -1,0 +1,98 @@
+services:
+
+  # ── PostgreSQL ────────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: interseguro-postgres
+    ports:
+      - "${DB_PORT}:5432"
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes:
+      # Persistir datos aunque el contenedor se reinicie
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - interseguro-network
+    restart: unless-stopped
+
+  # ── Node API ──────────────────────────────────────────────────────────────────
+  node-api:
+    build:
+      context: ./node-api
+      dockerfile: Dockerfile
+    container_name: interseguro-node-api
+    ports:
+      - "${NODE_API_PORT}:3000"
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+      - JWT_SECRET=${JWT_SECRET}
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    networks:
+      - interseguro-network
+    restart: unless-stopped
+
+  # ── Go API ────────────────────────────────────────────────────────────────────
+  go-api:
+    build:
+      context: ./go-api
+      dockerfile: Dockerfile
+    container_name: interseguro-go-api
+    ports:
+      - "${GO_API_PORT}:8080"
+    environment:
+      - PORT=8080
+      - NODE_API_URL=${NODE_API_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      node-api:
+        condition: service_healthy
+    networks:
+      - interseguro-network
+    restart: unless-stopped
+
+  # ── Frontend Angular ──────────────────────────────────────────────────────────
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: interseguro-web
+    ports:
+      - "${WEB_PORT}:80"
+    depends_on:
+      - go-api
+      - node-api
+    networks:
+      - interseguro-network
+    restart: unless-stopped
+
+# ── Volúmenes ─────────────────────────────────────────────────────────────────
+# postgres_data persiste los datos aunque hagas docker compose down
+volumes:
+  postgres_data:
+
+# ── Red interna ───────────────────────────────────────────────────────────────
+networks:
+  interseguro-network:
+    driver: bridge

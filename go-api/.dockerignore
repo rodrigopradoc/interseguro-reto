@@ -1,0 +1,17 @@
+# Archivos que Docker NO debe copiar al construir la imagen
+# Esto reduce el tamaño del contexto de build y evita copiar archivos innecesarios
+
+# Binarios compilados localmente (se recompila dentro del contenedor)
+main
+*.exe
+
+# Archivos de entorno local
+.env
+.env.*
+
+# Control de versiones
+.git
+.gitignore
+
+# Editor
+.vscode
