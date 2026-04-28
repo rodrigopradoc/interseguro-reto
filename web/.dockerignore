@@ -1,0 +1,6 @@
+# No copiar al contenedor
+node_modules
+dist
+.angular
+.vscode
+*.md

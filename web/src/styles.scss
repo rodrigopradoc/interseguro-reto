@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Mono:wght@400;500&family=Sora:wght@700;800&display=swap');
+
+:root {
+  --primary:       #1a5aff;
+  --primary-dark:  #0d3db8;
+  --primary-light: #eef2ff;
+  --accent:        #00c9a7;
+  --bg:            #f5f7fb;
+  --surface:       #ffffff;
+  --surface-2:     #f0f3f9;
+  --border:        #dde3ef;
+  --text:          #0f1b35;
+  --text-muted:    #6b7a99;
+  --text-light:    #a0aec0;
+  --success:       #00c9a7;
+  --error:         #f04461;
+
+  --font-display: 'Sora', sans-serif;
+  --font-body:    'DM Sans', sans-serif;
+  --font-mono:    'DM Mono', monospace;
+
+  --r-sm: 6px; --r-md: 12px; --r-lg: 18px; --r-xl: 24px;
+
+  --shadow-sm: 0 1px 4px rgba(15,27,53,.07);
+  --shadow-md: 0 4px 18px rgba(15,27,53,.10);
+  --shadow-lg: 0 8px 36px rgba(15,27,53,.13);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-font-smoothing: antialiased; }
+body { font-family: var(--font-body); background: var(--bg); color: var(--text); min-height: 100vh; }
+
+@keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+@keyframes spin   { to { transform:rotate(360deg); } }
